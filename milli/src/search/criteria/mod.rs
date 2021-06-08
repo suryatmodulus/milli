@@ -79,7 +79,7 @@ pub trait Context<'c> {
     fn synonyms(&self, word: &str) -> heed::Result<Option<Vec<Vec<String>>>>;
     fn searchable_fields_ids(&self) ->  heed::Result<Vec<FieldId>>;
     fn field_id_word_count_docids(&self, field_id: FieldId, word_count: u8) -> heed::Result<Option<RoaringBitmap>>;
-    fn word_level_position_docids(&self, word: &str, level: TreeLevel, left: u32, right: u32) -> Result<Option<RoaringBitmap>, heed::Error>;
+    fn word_level_position_docids(&self, word: &str, level: TreeLevel, in_prefix_cache: bool, left: u32, right: u32) -> Result<Option<RoaringBitmap>, heed::Error>;
 }
 pub struct CriteriaBuilder<'t> {
     rtxn: &'t heed::RoTxn<'t>,
@@ -186,9 +186,14 @@ impl<'c> Context<'c> for CriteriaBuilder<'c> {
         self.index.field_id_word_count_docids.get(self.rtxn, &key)
     }
 
-    fn word_level_position_docids(&self, word: &str, level: TreeLevel, left: u32, right: u32) -> Result<Option<RoaringBitmap>, heed::Error> {
+    fn word_level_position_docids(&self, word: &str, level: TreeLevel, in_prefix_cache: bool, left: u32, right: u32) -> Result<Option<RoaringBitmap>, heed::Error> {
         let key = (word, level, left, right);
-        self.index.word_level_position_docids.get(self.rtxn, &key)
+        let db = match in_prefix_cache {
+            true => self.index.word_prefix_level_position_docids,
+            false => self.index.word_level_position_docids,
+        };
+
+        db.get(self.rtxn, &key)
     }
 }
 
@@ -485,7 +490,7 @@ pub mod test {
             todo!()
         }
 
-        fn word_level_position_docids(&self, _word: &str, _level: TreeLevel, _left: u32, _right: u32) -> Result<Option<RoaringBitmap>, heed::Error> {
+        fn word_level_position_docids(&self, _word: &str, _level: TreeLevel, _in_prefix_cache: bool, _left: u32, _right: u32) -> Result<Option<RoaringBitmap>, heed::Error> {
             todo!()
         }
 

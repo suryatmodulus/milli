@@ -286,7 +286,7 @@ fn attribute_start_with_docids(ctx: &dyn Context, attribute_id: u32, query: &[Ex
             Synonyms(synonyms) => {
                 let mut synonyms_candidates = RoaringBitmap::new();
                 for word in synonyms {
-                    let wc = ctx.word_level_position_docids(word, lowest_level, pos, pos)?;
+                    let wc = ctx.word_level_position_docids(word, lowest_level, false, pos, pos)?;
                     if let Some(word_candidates) = wc {
                         synonyms_candidates |= word_candidates;
                     }
@@ -296,7 +296,7 @@ fn attribute_start_with_docids(ctx: &dyn Context, attribute_id: u32, query: &[Ex
             },
             Phrase(phrase) => {
                 for word in phrase {
-                    let wc = ctx.word_level_position_docids(word, lowest_level, pos, pos)?;
+                    let wc = ctx.word_level_position_docids(word, lowest_level, false, pos, pos)?;
                     if let Some(word_candidates) = wc {
                         attribute_candidates_array.push(word_candidates);
                     }
