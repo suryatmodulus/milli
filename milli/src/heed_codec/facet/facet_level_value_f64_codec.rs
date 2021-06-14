@@ -33,11 +33,11 @@ impl heed::BytesEncode<'_> for FacetLevelValueF64Codec {
     fn bytes_encode((field_id, level, left, right): &Self::EItem) -> Option<Cow<[u8]>> {
         let mut buffer = [0u8; 32];
 
-        let len = if *level != 0 {
-            // Write the globally ordered floats.
-            let bytes = f64_into_bytes(*left)?;
-            buffer[..8].copy_from_slice(&bytes[..]);
+        // Write the globally ordered floats.
+        let bytes = f64_into_bytes(*left)?;
+        buffer[..8].copy_from_slice(&bytes[..]);
 
+        let len = if *level != 0 {
             let bytes = f64_into_bytes(*right)?;
             buffer[8..16].copy_from_slice(&bytes[..]);
 
@@ -50,10 +50,6 @@ impl heed::BytesEncode<'_> for FacetLevelValueF64Codec {
 
             32 // length
         } else {
-            // Write the globally ordered floats.
-            let bytes = f64_into_bytes(*left)?;
-            buffer[..8].copy_from_slice(&bytes[..]);
-
             // Then the f64 values just to be able to read them back.
             let bytes = left.to_be_bytes();
             buffer[8..16].copy_from_slice(&bytes[..]);

@@ -1,3 +1,6 @@
+#![allow(clippy::type_complexity)]
+#![allow(clippy::too_many_arguments)]
+
 #[macro_use] extern crate pest_derive;
 
 mod criterion;

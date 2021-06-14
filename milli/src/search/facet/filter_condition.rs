@@ -262,6 +262,7 @@ impl FilterCondition {
         output: &mut RoaringBitmap,
     ) -> anyhow::Result<()>
     {
+        #[allow(clippy::float_cmp)]
         match (left, right) {
             // If the request is an exact value we must go directly to the deepest level.
             (Included(l), Included(r)) if l == r && level > 0 => {
@@ -299,6 +300,7 @@ impl FilterCondition {
             None => return Ok(()),
         };
 
+        #[allow(clippy::float_cmp)]
         // We must refine the left and right bounds of this range by retrieving the
         // missing part in a deeper level.
         match left_found.zip(right_found) {

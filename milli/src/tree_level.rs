@@ -27,9 +27,9 @@ impl TreeLevel {
     }
 }
 
-impl Into<u8> for TreeLevel {
-    fn into(self) -> u8 {
-        self.0
+impl From<TreeLevel> for u8 {
+    fn from(tree: TreeLevel) -> u8 {
+        tree.0
     }
 }
 
