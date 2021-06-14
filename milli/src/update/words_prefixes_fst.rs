@@ -1,4 +1,3 @@
-use std::iter::FromIterator;
 use std::str;
 
 use fst::Streamer;
@@ -49,7 +48,7 @@ impl<'t, 'u, 'i> WordsPrefixesFst<'t, 'u, 'i> {
     }
 
     pub fn execute(self) -> anyhow::Result<()> {
-        let words_fst = self.index.words_fst(&self.wtxn)?;
+        let words_fst = self.index.words_fst(self.wtxn)?;
         let number_of_words = words_fst.len();
         let min_number_of_words = (number_of_words as f64 * self.threshold) as usize;
 
@@ -91,7 +90,7 @@ impl<'t, 'u, 'i> WordsPrefixesFst<'t, 'u, 'i> {
         }
 
         // We merge all of the previously computed prefixes into on final set.
-        let op = fst::set::OpBuilder::from_iter(prefix_fsts.iter());
+        let op = prefix_fsts.iter().collect::<fst::set::OpBuilder>();
         let mut builder = fst::SetBuilder::memory();
         builder.extend_stream(op.r#union())?;
         let prefix_fst = builder.into_set();

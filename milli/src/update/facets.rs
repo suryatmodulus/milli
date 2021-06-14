@@ -123,8 +123,8 @@ fn clear_field_number_levels<'t, >(
     db.delete_range(wtxn, &range).map(drop)
 }
 
-fn compute_facet_number_levels<'t>(
-    rtxn: &'t heed::RoTxn,
+fn compute_facet_number_levels(
+    rtxn: &heed::RoTxn,
     db: heed::Database<FacetLevelValueF64Codec, CboRoaringBitmapCodec>,
     compression_type: CompressionType,
     compression_level: Option<u32>,
@@ -218,7 +218,7 @@ fn write_number_entry(
 {
     let key = (field_id, level, left, right);
     let key = FacetLevelValueF64Codec::bytes_encode(&key).ok_or(Error::Encoding)?;
-    let data = CboRoaringBitmapCodec::bytes_encode(&ids).ok_or(Error::Encoding)?;
+    let data = CboRoaringBitmapCodec::bytes_encode(ids).ok_or(Error::Encoding)?;
     writer.insert(&key, &data)?;
     Ok(())
 }

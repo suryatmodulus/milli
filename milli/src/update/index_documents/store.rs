@@ -357,7 +357,7 @@ impl<'s, A: AsRef<[u8]>> Store<'s, A> {
     ) -> anyhow::Result<()>
     {
         // We compute the list of words pairs proximities (self-join) and write it directly to disk.
-        let words_pair_proximities = compute_words_pair_proximities(&words_positions);
+        let words_pair_proximities = compute_words_pair_proximities(words_positions);
         self.insert_words_pairs_proximities_docids(words_pair_proximities, document_id)?;
 
         // We store document_id associated with all the words the record contains.
@@ -434,7 +434,7 @@ impl<'s, A: AsRef<[u8]>> Store<'s, A> {
             key.truncate(base_size);
             key.extend_from_slice(word.as_bytes());
             // We serialize the positions into a buffer.
-            let positions = RoaringBitmap::from_iter(positions.iter().cloned());
+            let positions = positions.iter().cloned().collect();
             let bytes = BoRoaringBitmapCodec::bytes_encode(&positions)
                 .with_context(|| "could not serialize positions")?;
             // that we write under the generated key into MTBL
@@ -783,7 +783,7 @@ fn compute_words_pair_proximities(
             let prox = u8::try_from(prox).unwrap();
             // We don't care about a word that appear at the
             // same position or too far from the other.
-            if prox >= 1 && prox <= 7 && min_prox.map_or(true, |mp| prox < mp) {
+            if (1..=7).contains(&prox) && min_prox.map_or(true, |mp| prox < mp) {
                 min_prox = Some(prox)
             }
         }

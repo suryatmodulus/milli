@@ -106,7 +106,7 @@ impl<'t> Criterion for AscDesc<'t> {
                             let mut candidates = match (&self.query_tree, candidates) {
                                 (_, Some(candidates)) => candidates,
                                 (Some(qt), None) => {
-                                    let context = CriteriaBuilder::new(&self.rtxn, &self.index)?;
+                                    let context = CriteriaBuilder::new(self.rtxn, self.index)?;
                                     resolve_query_tree(&context, qt, params.wdcache)?
                                 },
                                 (None, None) => self.index.documents_ids(self.rtxn)?,
@@ -211,7 +211,7 @@ fn iterative_facet_ordered_iter<'t>(
     // required to collect the result into an owned collection (a Vec).
     // https://github.com/rust-itertools/itertools/issues/499
     let vec: Vec<_> = iter
-        .group_by(|(_, v)| v.clone())
+        .group_by(|(_, v)| *v)
         .into_iter()
         .map(|(_, ids)| ids.map(|(id, _)| id).collect())
         .collect();

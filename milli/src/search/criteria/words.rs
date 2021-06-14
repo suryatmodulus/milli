@@ -30,7 +30,10 @@ impl<'t> Words<'t> {
 
 impl<'t> Criterion for Words<'t> {
     #[logging_timer::time("Words::{}")]
-    fn next(&mut self, params: &mut CriterionParameters) -> anyhow::Result<Option<CriterionResult>> {
+    fn next(
+        &mut self,
+        params: &mut CriterionParameters,
+    ) -> anyhow::Result<Option<CriterionResult>> {
         // remove excluded candidates when next is called, instead of doing it in the loop.
         if let Some(candidates) = self.candidates.as_mut() {
             *candidates -= params.excluded_candidates;
@@ -51,10 +54,7 @@ impl<'t> Criterion for Words<'t> {
                         None => None,
                     };
 
-                    let bucket_candidates = match self.bucket_candidates.as_mut() {
-                        Some(bucket_candidates) => Some(take(bucket_candidates)),
-                        None => None,
-                    };
+                    let bucket_candidates = self.bucket_candidates.as_mut().map(|bucket_candidates| take(bucket_candidates));
 
                     return Ok(Some(CriterionResult {
                         query_tree: Some(query_tree),

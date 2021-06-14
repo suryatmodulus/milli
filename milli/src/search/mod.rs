@@ -129,7 +129,7 @@ impl<'a> Search<'a> {
         debug!("facet candidates: {:?} took {:.02?}", filtered_candidates, before.elapsed());
 
         let matching_words = match query_tree.as_ref() {
-            Some(query_tree) => MatchingWords::from_query_tree(&query_tree),
+            Some(query_tree) => MatchingWords::from_query_tree(query_tree),
             None => MatchingWords::default(),
         };
 

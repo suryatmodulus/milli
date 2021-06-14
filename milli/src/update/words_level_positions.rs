@@ -255,7 +255,7 @@ fn write_level_entry(
 {
     let key = (word, level, left, right);
     let key = StrLevelPositionCodec::bytes_encode(&key).ok_or(Error::Encoding)?;
-    let data = CboRoaringBitmapCodec::bytes_encode(&ids).ok_or(Error::Encoding)?;
+    let data = CboRoaringBitmapCodec::bytes_encode(ids).ok_or(Error::Encoding)?;
     writer.insert(&key, &data)?;
     Ok(())
 }

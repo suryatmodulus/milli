@@ -179,7 +179,7 @@ impl<'t, 'u, 'i> DeleteDocuments<'t, 'u, 'i> {
             // We create an iterator to be able to get the content and delete the word docids.
             // It's faster to acquire a cursor to get and delete or put, as we avoid traversing
             // the LMDB B-Tree two times but only once.
-            let mut iter = word_docids.prefix_iter_mut(self.wtxn, &word)?;
+            let mut iter = word_docids.prefix_iter_mut(self.wtxn, word)?;
             if let Some((key, mut docids)) = iter.next().transpose()? {
                 if key == word.as_ref() {
                     let previous_len = docids.len();

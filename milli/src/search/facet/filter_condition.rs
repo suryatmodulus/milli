@@ -341,7 +341,7 @@ impl FilterCondition {
             GreaterThan(val)        => (Excluded(*val), Included(f64::MAX)),
             GreaterThanOrEqual(val) => (Included(*val), Included(f64::MAX)),
             Equal(number, string)   => {
-                let string_docids = strings_db.get(rtxn, &(field_id, &string))?.unwrap_or_default();
+                let string_docids = strings_db.get(rtxn, &(field_id, string))?.unwrap_or_default();
                 let number_docids = match number {
                     Some(n) => {
                         let n = Included(*n);

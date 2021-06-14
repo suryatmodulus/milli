@@ -1,4 +1,4 @@
-use std::iter::{Chain, FromIterator};
+use std::iter::Chain;
 use std::ops::RangeInclusive;
 use roaring::bitmap::{RoaringBitmap, IntoIter};
 
@@ -10,12 +10,12 @@ impl AvailableDocumentsIds {
     pub fn from_documents_ids(docids: &RoaringBitmap) -> AvailableDocumentsIds {
         match docids.max() {
             Some(last_id) => {
-                let mut available = RoaringBitmap::from_iter(0..last_id);
-                available.difference_with(&docids);
+                let mut available = (0..last_id).collect::<RoaringBitmap>();
+                available.difference_with(docids);
 
                 let iter = match last_id.checked_add(1) {
                     Some(id) => id..=u32::max_value(),
-                    None => 1..=0, // empty range iterator
+                    None => 0..=0, // empty range iterator
                 };
 
                 AvailableDocumentsIds {

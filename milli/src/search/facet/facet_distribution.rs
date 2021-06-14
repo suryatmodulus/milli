@@ -183,11 +183,10 @@ impl<'a> FacetDistribution<'a> {
             let mut distribution = BTreeMap::new();
             if candidates.len() <= CANDIDATES_THRESHOLD {
                 self.facet_distribution_from_documents(field_id, Number, candidates, &mut distribution)?;
-                self.facet_distribution_from_documents(field_id, String, candidates, &mut distribution)?;
             } else {
                 self.facet_numbers_distribution_from_facet_levels(field_id, candidates, &mut distribution)?;
-                self.facet_distribution_from_documents(field_id, String, candidates, &mut distribution)?;
             }
+            self.facet_distribution_from_documents(field_id, String, candidates, &mut distribution)?;
 
             Ok(distribution)
         } else {

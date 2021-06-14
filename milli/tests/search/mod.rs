@@ -9,7 +9,7 @@ use slice_group_by::GroupBy;
 
 mod query_criteria;
 
-pub const TEST_QUERY: &'static str = "hello world america";
+pub const TEST_QUERY: &str = "hello world america";
 
 pub const EXTERNAL_DOCUMENTS_IDS: &[&str; 17] = &["A", "B", "C", "D", "E", "F", "G", "H", "I", "J", "K", "L", "M", "N", "O", "P", "Q"];
 

@@ -343,7 +343,7 @@ impl<'t, 'u, 'i, 'a> IndexDocuments<'t, 'u, 'i, 'a> {
         let progress_callback = |step| progress_callback(step, update_id);
 
         let transform = Transform {
-            rtxn: &self.wtxn,
+            rtxn: self.wtxn,
             index: self.index,
             log_every_n: self.log_every_n,
             chunk_compression_type: self.chunk_compression_type,

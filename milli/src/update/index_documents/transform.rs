@@ -157,7 +157,7 @@ impl Transform<'_, '_> {
 
             // We prepare the fields ids map with the documents keys.
             for (key, _value) in &document {
-                fields_ids_map.insert(&key).context("field id limit reached")?;
+                fields_ids_map.insert(key).context("field id limit reached")?;
             }
 
             // We retrieve the user id from the document based on the primary key name,
@@ -295,7 +295,7 @@ impl Transform<'_, '_> {
                 Some(pos) => {
                     let external_id = &record[pos];
                     // We validate the document id [a-zA-Z0-9\-_].
-                    match validate_document_id(&external_id) {
+                    match validate_document_id(external_id) {
                         Some(valid) => valid,
                         None => return Err(anyhow!("invalid document id: {:?}", external_id)),
                     }
@@ -400,7 +400,7 @@ impl Transform<'_, '_> {
                         IndexDocumentsMethod::ReplaceDocuments => (docid, update_obkv),
                         IndexDocumentsMethod::UpdateDocuments => {
                             let key = BEU32::new(docid);
-                            let base_obkv = self.index.documents.get(&self.rtxn, &key)?
+                            let base_obkv = self.index.documents.get(self.rtxn, &key)?
                                 .context("document not found")?;
                             let update_obkv = obkv::KvReader::new(update_obkv);
                             merge_two_obkvs(base_obkv, update_obkv, &mut obkv_buffer);
@@ -535,7 +535,7 @@ fn compute_primary_key_pair(
 ) -> anyhow::Result<(FieldId, String)> {
     match primary_key {
         Some(primary_key) => {
-            let id = fields_ids_map.insert(primary_key).ok_or(anyhow!("Maximum number of fields exceeded"))?;
+            let id = fields_ids_map.insert(primary_key).ok_or_else(|| anyhow!("Maximum number of fields exceeded"))?;
             Ok((id, primary_key.to_string()))
         }
         None => {
